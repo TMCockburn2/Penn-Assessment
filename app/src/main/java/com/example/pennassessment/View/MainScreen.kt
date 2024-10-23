@@ -2,6 +2,7 @@ package com.example.pennassessment.View
 
 import android.annotation.SuppressLint
 import android.os.Build
+import android.provider.Settings.Global
 import android.util.Log
 import androidx.annotation.RequiresApi
 import androidx.compose.foundation.background
@@ -33,17 +34,27 @@ import com.example.pennassessment.ViewModel.CityState
 import com.example.pennassessment.ViewModel.LocationState
 import com.example.pennassessment.ViewModel.StationViewModel
 import com.example.pennassessment.ViewModel.UiState
+import com.google.accompanist.permissions.ExperimentalPermissionsApi
+import com.google.accompanist.permissions.rememberMultiplePermissionsState
+import kotlinx.coroutines.GlobalScope
+import kotlinx.coroutines.launch
 
 
+@OptIn(ExperimentalPermissionsApi::class)
 @RequiresApi(Build.VERSION_CODES.O)
-@SuppressLint("CoroutineCreationDuringComposition")
+@SuppressLint("CoroutineCreationDuringComposition", "PermissionLaunchedDuringComposition")
 @Composable
 fun MainScreen(viewModel: StationViewModel){
     val scrollState = rememberScrollState()
     val uiState = viewModel.uiState.collectAsState()
     val luiState = viewModel.luiState.collectAsState()
     val cState = viewModel.cState.collectAsState()
-
+    val multiplePermissionsState = rememberMultiplePermissionsState(
+        listOf(
+            android.Manifest.permission.ACCESS_FINE_LOCATION,
+            android.Manifest.permission.ACCESS_COARSE_LOCATION,
+        )
+    )
     Box(
         modifier = Modifier
             .background(Color.White)
@@ -85,7 +96,11 @@ fun MainScreen(viewModel: StationViewModel){
             Spacer(modifier = Modifier.height(16.dp))
             // Button to trigger data fetch
             Button(onClick = {
-                viewModel.fetchLocation()
+                GlobalScope.launch {
+                    multiplePermissionsState.launchMultiplePermissionRequest()
+                    viewModel.fetchLocation()
+                }
+
             }) {
                 Text(text = "Fetch Location")
             }
@@ -119,6 +134,7 @@ fun MainScreen(viewModel: StationViewModel){
             }
             Spacer(modifier = Modifier.height(16.dp))
             Button(onClick = {
+                multiplePermissionsState.launchMultiplePermissionRequest()
                 viewModel.fetchNearestStationData()
             }) {
                 Text(text = "Fetch Nearest Station Data")

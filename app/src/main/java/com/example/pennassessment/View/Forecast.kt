@@ -15,7 +15,7 @@ import java.time.LocalDate
 
 @RequiresApi(Build.VERSION_CODES.O)
 @Composable
-fun showStationForecast(forecastName: String, list: List<DailyForecastParameters>) {
+fun showStationForecast(forecastName: String, list: List<DailyForecastParameters>?) {
     Column {
         Text(
             text = forecastName,
@@ -25,7 +25,7 @@ fun showStationForecast(forecastName: String, list: List<DailyForecastParameters
     Row(
         modifier = Modifier.padding(all = 10.dp)
     ) {
-        buildForecastCards(filterDays(list))
+        list?.let { filterDays(it) }?.let { buildForecastCards(it) }
     }
 }
 
