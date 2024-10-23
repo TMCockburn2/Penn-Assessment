@@ -75,19 +75,21 @@ fun showNearbyStationInfo(acData: AcData){
 
 @Composable
 private fun NearestLocationIaqiCards(iaqiName: String, value: IaqiValue) {
-    Row {
-        Column(
-            modifier = Modifier.padding(all = 10.dp)
-        ) {
-            Text(
-                text = iaqiName,
-                fontSize = 12.sp
-            )
-            Spacer(modifier = Modifier.height(4.dp))
-            Text(
-                text = "${value.v}",
-                fontSize = 12.sp
-            )
+    if (value != null) {
+        Row {
+            Column(
+                modifier = Modifier.padding(all = 10.dp)
+            ) {
+                Text(
+                    text = iaqiName,
+                    fontSize = 12.sp
+                )
+                Spacer(modifier = Modifier.height(4.dp))
+                Text(
+                    text = "${value.v}",
+                    fontSize = 12.sp
+                )
+            }
         }
     }
 }
